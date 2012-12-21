@@ -1,18 +1,8 @@
-# get the name of the branch we are on
+# get the name of the ruby version
 function rvm_prompt_info() {
-  ruby_version=$(~/.rvm/bin/rvm-prompt 2> /dev/null) || return
-  echo "($ruby_version)"
+  [ -f $HOME/.rvm/bin/rvm-prompt ] || return
+  local rvm_prompt
+  rvm_prompt=$($HOME/.rvm/bin/rvm-prompt ${ZSH_THEME_RVM_PROMPT_OPTIONS} 2>/dev/null)
+  [[ "${rvm_prompt}x" == "x" ]] && return
+  echo "${ZSH_THEME_RVM_PROMPT_PREFIX:=(}${rvm_prompt}${ZSH_THEME_RVM_PROMPT_SUFFIX:=)}"
 }
-
-# get the name of the ruby as well as the gemset
-# from http://snipplr.com/view.php?codeview&id=36724
-function rvm_with_gemset {
-  local gemset=$(echo $GEM_HOME | awk -F'@' '{print $2}')
-  [ "$gemset" != "" ] && gemset="@$gemset"
-  # local version=$(echo $MY_RUBY_HOME | awk -F'-' '{print $2}')
-  local version=$(~/.rvm/bin/rvm-prompt s i v)
-  [ "$version" != "" ] && version="$version"
-  local full="$version$gemset"
-  [ "$full" != "" ] && echo "$full"
-}
-
